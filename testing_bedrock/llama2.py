@@ -10,18 +10,18 @@ prompt="""
         you are a cricket expert now just tell me when RCB will win the IPL?
 """
 
-bedrock=boto3.client(service_name="bedrock-runtime")
+bedrock=boto3.client(service_name="bedrock-runtime",region_name='us-east-1')
 
 payload={
     
     "prompt": "[INST]"+prompt+"[/INST]",
-    "max_gen_len": 512,
+    "maxTokens": 512,
     "temperature": 0.3,
     "top_p":0.9
 }
 
 body=json.dumps(payload)
-model_id="meta.llama2-70b-chat-v1"
+model_id="ai21.j2-mid-v1"
 
 
 response=bedrock.invoke_model(

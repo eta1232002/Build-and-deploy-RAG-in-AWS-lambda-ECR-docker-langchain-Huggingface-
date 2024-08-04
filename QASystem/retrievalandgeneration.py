@@ -7,7 +7,7 @@ from QASystem.ingestion import get_vector_store
 from QASystem.ingestion import data_ingestion
 from langchain_community.embeddings import BedrockEmbeddings
 
-bedrock=boto3.client(service_name="bedrock-runtime")
+bedrock=boto3.client(service_name="bedrock-runtime", region_name='us-east-1')
 bedrock_embeddings=BedrockEmbeddings(model_id="amazon.titan-embed-text-v1",client=bedrock)
 
 
@@ -31,7 +31,7 @@ PROMPT=PromptTemplate(
 
 
 def get_llama2_llm():
-    llm=Bedrock(model_id="meta.llama2-13b-chat-v1",client=bedrock)
+    llm=Bedrock(model_id="ai21.j2-mid-v1",client=bedrock)
     
     return llm
 
