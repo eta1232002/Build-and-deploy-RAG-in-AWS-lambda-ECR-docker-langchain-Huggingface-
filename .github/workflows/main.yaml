@@ -64,18 +64,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Download EC2 instance SSH key
-        uses: actions/download-artifact@v2
-        with:
-          name: ec2-key
-          path: ~/.ssh
-
-      - name: Set SSH key permissions
-        run: chmod 600 ~/.ssh/id_rsa
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
 
       - name: Deploy Docker image to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ec2-user@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
           docker pull ${{ secrets.AWS_ECR_REPO_URI }}:latest
           docker stop my-app || true
           docker rm my-app || true
