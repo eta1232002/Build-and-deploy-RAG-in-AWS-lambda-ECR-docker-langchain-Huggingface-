@@ -44,12 +44,40 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR.
+      - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           IMAGE_TAG: latest
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
           docker build -t ${{ secrets.AWS_ECR_REPO_URI }}:$IMAGE_TAG .
           docker push ${{ secrets.AWS_ECR_REPO_URI }}:$IMAGE_TAG
+
+  deploy-to-ec2:
+    name: Deploy to EC2
+    needs: build-and-push-ecr-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Download EC2 instance SSH key
+        uses: actions/download-artifact@v2
+        with:
+          name: ec2-key
+          path: ~/.ssh
+
+      - name: Set SSH key permissions
+        run: chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy Docker image to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+          docker pull ${{ secrets.AWS_ECR_REPO_URI }}:latest
+          docker stop my-app || true
+          docker rm my-app || true
+          docker run -d --name my-app -p 80:80 ${{ secrets.AWS_ECR_REPO_URI }}:latest
+          EOF
