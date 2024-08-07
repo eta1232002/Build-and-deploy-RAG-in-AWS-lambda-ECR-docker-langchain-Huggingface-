@@ -71,7 +71,7 @@ jobs:
 
       - name: Deploy Docker image to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i RagKey.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i RagKey.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }}
           docker pull ${{ secrets.AWS_ECR_REPO_URI }}:latest
           docker stop my-app || true
           docker rm my-app || true
