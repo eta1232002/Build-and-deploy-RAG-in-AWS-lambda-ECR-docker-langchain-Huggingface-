@@ -66,12 +66,12 @@ jobs:
 
       - name: Add SSH key
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > Rag_kp.pem
-          chmod 600 Rag_kp.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" > RagKey.pem
+          chmod 600 RagKey.pem
 
       - name: Deploy Docker image to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i Rag_kp.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i RagKey.pem ubuntu@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
           docker pull ${{ secrets.AWS_ECR_REPO_URI }}:latest
           docker stop my-app || true
           docker rm my-app || true
