@@ -1,6 +1,6 @@
 # Document Question and Answering RAG APPLICATION
 
-🚀 Welcome to the Document Question and Answering (Q&A) RAG Application! This project leverages cutting-edge technologies to create an efficient Q&A system. From model inference to deployment, I've got you covered.
+🚀 Welcom to the Document Question and Answering (Q&A) RAG Application! This project leverages cutting-edge technologies to create an efficient Q&A system. From model inference to deployment, I've got you covered.
 
 ## Overview
 
